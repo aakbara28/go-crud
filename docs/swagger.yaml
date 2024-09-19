@@ -1,0 +1,105 @@
+definitions:
+  model.Mahasiswa:
+    properties:
+      jurusan:
+        type: string
+      nama:
+        type: string
+      nim:
+        type: string
+      umur:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /mahasiswa:
+    post:
+      consumes:
+      - application/json
+      description: Create a new mahasiswa entry in the database
+      parameters:
+      - description: Mahasiswa data
+        in: body
+        name: mahasiswa
+        required: true
+        schema:
+          $ref: '#/definitions/model.Mahasiswa'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Mahasiswa'
+      summary: Create a new mahasiswa
+  /mahasiswa/{nim}:
+    delete:
+      description: Remove a mahasiswa entry from the database by NIM
+      parameters:
+      - description: NIM
+        in: path
+        name: nim
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Mahasiswa deleted
+          schema:
+            type: string
+        "404":
+          description: Mahasiswa not found
+          schema:
+            type: string
+      summary: Delete a mahasiswa by NIM
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a mahasiswa from the database by NIM
+      parameters:
+      - description: NIM
+        in: path
+        name: nim
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Mahasiswa'
+        "404":
+          description: Mahasiswa not found
+          schema:
+            type: string
+      summary: Get a mahasiswa by NIM
+    put:
+      consumes:
+      - application/json
+      description: Update a mahasiswa entry in the database
+      parameters:
+      - description: NIM
+        in: path
+        name: nim
+        required: true
+        type: string
+      - description: Mahasiswa data
+        in: body
+        name: mahasiswa
+        required: true
+        schema:
+          $ref: '#/definitions/model.Mahasiswa'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Mahasiswa updated
+          schema:
+            type: string
+        "404":
+          description: Mahasiswa not found
+          schema:
+            type: string
+      summary: Update a mahasiswa by NIM
+swagger: "2.0"
