@@ -24,7 +24,6 @@ go-crud/
 
 ## Features
 
-- ✅ Clean directory structure following coding standards
 - ✅ Logging pattern with requestId and requestKey
 - ✅ Consistent error handling
 - ✅ Standardized response format
