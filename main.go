@@ -1,9 +1,11 @@
 package main
 
 import (
+	"flag"
 	"go-crud/config"
 	"go-crud/controller"
-	_ "go-crud/docs" // Import your docs
+	_ "go-crud/docs"
+	"go-crud/internal/environment"
 	"go-crud/model"
 	"go-crud/service"
 	"log"
@@ -14,31 +16,42 @@ import (
 )
 
 func main() {
+	// Parse command line flags for environment
+	env := flag.String("env", "local", "Environment (local, dev, prod)")
+	flag.Parse()
+
+	// Load configuration
+	if err := environment.LoadConfig(*env); err != nil {
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
+
 	// Setup database connection
 	db := config.SetupDB()
-	if err := db.AutoMigrate(&model.Mahasiswa{}); err != nil {
+	if err := db.AutoMigrate(&model.Student{}); err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
 	// Initialize service and controller
-	mahasiswaService := service.NewMahasiswaService(db)
-	mahasiswaController := controller.NewMahasiswaController(mahasiswaService)
+	studentService := service.NewStudentService(db)
+	studentController := controller.NewStudentController(studentService)
 
 	// Setup router
 	router := mux.NewRouter()
 
-	// Define routes
-	router.HandleFunc("/mahasiswa", mahasiswaController.CreateMahasiswa).Methods("POST")
-	router.HandleFunc("/mahasiswa/{nim}", mahasiswaController.GetMahasiswa).Methods("GET")
-	router.HandleFunc("/mahasiswa/{nim}", mahasiswaController.UpdateMahasiswa).Methods("PUT")
-	router.HandleFunc("/mahasiswa/{nim}", mahasiswaController.DeleteMahasiswa).Methods("DELETE")
+	// API v1 routes
+	v1 := router.PathPrefix("/v1").Subrouter()
+	v1.HandleFunc("/student", studentController.CreateStudent).Methods("POST")
+	v1.HandleFunc("/student/{studentId}", studentController.GetStudent).Methods("GET")
+	v1.HandleFunc("/student/{studentId}", studentController.UpdateStudent).Methods("PUT")
+	v1.HandleFunc("/student/{studentId}", studentController.DeleteStudent).Methods("DELETE")
 
 	// Swagger UI route
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	// Start server
-	log.Println("Server starting on :8080")
-	if err := http.ListenAndServe(":8080", router); err != nil {
+	serverPort := ":" + environment.AppConfig.Server.Port
+	log.Printf("Server starting on %s", serverPort)
+	if err := http.ListenAndServe(serverPort, router); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }

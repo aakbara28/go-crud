@@ -1,25 +1,28 @@
 package config
 
 import (
+	"fmt"
+	"go-crud/internal/environment"
 	"log"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-const (
-	dbUser     = "" // fill with your db user
-	dbPassword = "" // fill with your pass
-	dbName     = "" // fill with your db name
-	dbHost     = "localhost"
-	dbPort     = "5432"
-)
-
 func SetupDB() *gorm.DB {
-	dsn := "host=" + dbHost + " user=" + dbUser + " password=" + dbPassword + " dbname=" + dbName + " port=" + dbPort + " sslmode=disable"
+	config := environment.AppConfig.Database
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+		config.Host, config.User, config.Password, config.Name, config.Port, config.SSLMode)
+	
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
+	
+	// Always close database connection when done
+	dbSql, _ := db.DB()
+	dbSql.SetMaxOpenConns(25)
+	dbSql.SetMaxIdleConns(25)
+	
 	return db
 }

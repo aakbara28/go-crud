@@ -15,24 +15,30 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/mahasiswa": {
+        "/student": {
             "post": {
-                "description": "Create a new mahasiswa entry in the database",
+                "description": "Create a new student entry in the database",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Create a new mahasiswa",
+                "summary": "Create a new student",
                 "parameters": [
                     {
-                        "description": "Mahasiswa data",
-                        "name": "mahasiswa",
+                        "type": "string",
+                        "description": "requestId",
+                        "name": "requestId",
+                        "in": "header"
+                    },
+                    {
+                        "description": "Student data",
+                        "name": "student",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Mahasiswa"
+                            "$ref": "#/definitions/model.Student"
                         }
                     }
                 ],
@@ -40,27 +46,39 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Mahasiswa"
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
             }
         },
-        "/mahasiswa/{nim}": {
+        "/student/{studentId}": {
             "get": {
-                "description": "Retrieve a mahasiswa from the database by NIM",
+                "description": "Retrieve a student from the database by Student ID",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get a mahasiswa by NIM",
+                "summary": "Get a student by Student ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "NIM",
-                        "name": "nim",
+                        "description": "requestId",
+                        "name": "requestId",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Student ID",
+                        "name": "studentId",
                         "in": "path",
                         "required": true
                     }
@@ -69,82 +87,100 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Mahasiswa"
+                            "$ref": "#/definitions/response.Response"
                         }
                     },
                     "404": {
-                        "description": "Mahasiswa not found",
+                        "description": "Not Found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
             },
             "put": {
-                "description": "Update a mahasiswa entry in the database",
+                "description": "Update a student entry in the database",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Update a mahasiswa by NIM",
+                "summary": "Update a student by Student ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "NIM",
-                        "name": "nim",
+                        "description": "requestId",
+                        "name": "requestId",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Student ID",
+                        "name": "studentId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Mahasiswa data",
-                        "name": "mahasiswa",
+                        "description": "Student data",
+                        "name": "student",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Mahasiswa"
+                            "$ref": "#/definitions/model.Student"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Mahasiswa updated",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
                         }
                     },
                     "404": {
-                        "description": "Mahasiswa not found",
+                        "description": "Not Found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Remove a mahasiswa entry from the database by NIM",
-                "summary": "Delete a mahasiswa by NIM",
+                "description": "Remove a student entry from the database by Student ID",
+                "summary": "Delete a student by Student ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "NIM",
-                        "name": "nim",
+                        "description": "requestId",
+                        "name": "requestId",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Student ID",
+                        "name": "studentId",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Mahasiswa deleted",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/response.Response"
                         }
                     },
                     "404": {
-                        "description": "Mahasiswa not found",
+                        "description": "Not Found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -152,20 +188,41 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.Mahasiswa": {
+        "model.Student": {
             "type": "object",
             "properties": {
-                "jurusan": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                },
-                "nim": {
-                    "type": "string"
-                },
-                "umur": {
+                "age": {
                     "type": "integer"
+                },
+                "major": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "studentId": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "requestKey": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         }
@@ -182,8 +239,6 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
-	LeftDelim:        "{{",
-	RightDelim:       "}}",
 }
 
 func init() {

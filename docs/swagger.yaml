@@ -1,65 +1,95 @@
 definitions:
-  model.Mahasiswa:
+  model.Student:
     properties:
-      jurusan:
-        type: string
-      nama:
-        type: string
-      nim:
-        type: string
-      umur:
+      age:
         type: integer
+      major:
+        type: string
+      name:
+        type: string
+      studentId:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      requestId:
+        type: string
+      requestKey:
+        type: string
+      status:
+        type: string
     type: object
 info:
   contact: {}
 paths:
-  /mahasiswa:
+  /student:
     post:
       consumes:
       - application/json
-      description: Create a new mahasiswa entry in the database
+      description: Create a new student entry in the database
       parameters:
-      - description: Mahasiswa data
+      - description: requestId
+        in: header
+        name: requestId
+        type: string
+      - description: Student data
         in: body
-        name: mahasiswa
+        name: student
         required: true
         schema:
-          $ref: '#/definitions/model.Mahasiswa'
+          $ref: '#/definitions/model.Student'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.Mahasiswa'
-      summary: Create a new mahasiswa
-  /mahasiswa/{nim}:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create a new student
+  /student/{studentId}:
     delete:
-      description: Remove a mahasiswa entry from the database by NIM
+      description: Remove a student entry from the database by Student ID
       parameters:
-      - description: NIM
+      - description: requestId
+        in: header
+        name: requestId
+        type: string
+      - description: Student ID
         in: path
-        name: nim
+        name: studentId
         required: true
         type: string
       responses:
         "200":
-          description: Mahasiswa deleted
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/response.Response'
         "404":
-          description: Mahasiswa not found
+          description: Not Found
           schema:
-            type: string
-      summary: Delete a mahasiswa by NIM
+            $ref: '#/definitions/response.Response'
+      summary: Delete a student by Student ID
     get:
       consumes:
       - application/json
-      description: Retrieve a mahasiswa from the database by NIM
+      description: Retrieve a student from the database by Student ID
       parameters:
-      - description: NIM
+      - description: requestId
+        in: header
+        name: requestId
+        type: string
+      - description: Student ID
         in: path
-        name: nim
+        name: studentId
         required: true
         type: string
       produces:
@@ -68,38 +98,46 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Mahasiswa'
+            $ref: '#/definitions/response.Response'
         "404":
-          description: Mahasiswa not found
+          description: Not Found
           schema:
-            type: string
-      summary: Get a mahasiswa by NIM
+            $ref: '#/definitions/response.Response'
+      summary: Get a student by Student ID
     put:
       consumes:
       - application/json
-      description: Update a mahasiswa entry in the database
+      description: Update a student entry in the database
       parameters:
-      - description: NIM
+      - description: requestId
+        in: header
+        name: requestId
+        type: string
+      - description: Student ID
         in: path
-        name: nim
+        name: studentId
         required: true
         type: string
-      - description: Mahasiswa data
+      - description: Student data
         in: body
-        name: mahasiswa
+        name: student
         required: true
         schema:
-          $ref: '#/definitions/model.Mahasiswa'
+          $ref: '#/definitions/model.Student'
       produces:
       - application/json
       responses:
         "200":
-          description: Mahasiswa updated
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
         "404":
-          description: Mahasiswa not found
+          description: Not Found
           schema:
-            type: string
-      summary: Update a mahasiswa by NIM
+            $ref: '#/definitions/response.Response'
+      summary: Update a student by Student ID
 swagger: "2.0"
