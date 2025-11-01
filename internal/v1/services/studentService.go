@@ -1,15 +1,15 @@
-package service
+package services
 
 import (
-	"go-crud/model"
+	"go-crud/internal/v1/models"
 
 	"gorm.io/gorm"
 )
 
 type StudentService interface {
-	Create(s model.Student) error
-	GetByStudentID(studentId string) (model.Student, error)
-	Update(s model.Student) error
+	Create(s models.Student) error
+	GetByStudentID(studentId string) (models.Student, error)
+	Update(s models.Student) error
 	DeleteByStudentID(studentId string) error
 }
 
@@ -21,7 +21,7 @@ func NewStudentService(db *gorm.DB) StudentService {
 	return &studentService{db}
 }
 
-func (s *studentService) Create(st model.Student) error {
+func (s *studentService) Create(st models.Student) error {
 	tx := s.db.Begin()
 	err := tx.Create(&st).Error
 	if err == nil {
@@ -32,15 +32,15 @@ func (s *studentService) Create(st model.Student) error {
 	return err
 }
 
-func (s *studentService) GetByStudentID(studentId string) (model.Student, error) {
-	var st model.Student
+func (s *studentService) GetByStudentID(studentId string) (models.Student, error) {
+	var st models.Student
 	err := s.db.Where("student_id = ?", studentId).First(&st).Error
 	return st, err
 }
 
-func (s *studentService) Update(st model.Student) error {
+func (s *studentService) Update(st models.Student) error {
 	tx := s.db.Begin()
-	var existing model.Student
+	var existing models.Student
 	err := tx.Where("student_id = ?", st.StudentID).First(&existing).Error
 	if err != nil {
 		tx.Rollback()
@@ -57,13 +57,13 @@ func (s *studentService) Update(st model.Student) error {
 
 func (s *studentService) DeleteByStudentID(studentId string) error {
 	tx := s.db.Begin()
-	var existing model.Student
+	var existing models.Student
 	err := tx.Where("student_id = ?", studentId).First(&existing).Error
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	err = tx.Where("student_id = ?", studentId).Delete(&model.Student{}).Error
+	err = tx.Where("student_id = ?", studentId).Delete(&models.Student{}).Error
 	if err == nil {
 		tx.Commit()
 	} else {
@@ -71,5 +71,3 @@ func (s *studentService) DeleteByStudentID(studentId string) error {
 	}
 	return err
 }
-
-

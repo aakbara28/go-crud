@@ -1,4 +1,4 @@
-package controller
+package controllers
 
 import (
 	"encoding/json"
@@ -6,8 +6,8 @@ import (
 	"go-crud/internal/logging"
 	"go-crud/internal/utils"
 	"go-crud/internal/v1/handler/response"
-	"go-crud/model"
-	"go-crud/service"
+	"go-crud/internal/v1/models"
+	"go-crud/internal/v1/services"
 	"net/http"
 	"strconv"
 
@@ -17,11 +17,11 @@ import (
 
 // StudentController defines the controller for Student operations.
 type StudentController struct {
-	service service.StudentService
+	service services.StudentService
 }
 
 // NewStudentController creates a new StudentController.
-func NewStudentController(s service.StudentService) *StudentController {
+func NewStudentController(s services.StudentService) *StudentController {
 	return &StudentController{s}
 }
 
@@ -31,12 +31,12 @@ func NewStudentController(s service.StudentService) *StudentController {
 // @Accept json
 // @Produce json
 // @Param requestId header string false "requestId"
-// @Param student body model.Student true "Student data"
+// @Param student body models.Student true "Student data"
 // @Success 201 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Router /student [post]
 func (c *StudentController) CreateStudent(w http.ResponseWriter, r *http.Request) {
-	var s model.Student
+	var s models.Student
 	var res response.Response
 	var err error
 	httpStatus := constparam.StatusCreated
@@ -127,13 +127,13 @@ func (c *StudentController) GetStudent(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param requestId header string false "requestId"
 // @Param studentId path string true "Student ID"
-// @Param student body model.Student true "Student data"
+// @Param student body models.Student true "Student data"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Failure 404 {object} response.Response
 // @Router /student/{studentId} [put]
 func (c *StudentController) UpdateStudent(w http.ResponseWriter, r *http.Request) {
-	var s model.Student
+	var s models.Student
 	var res response.Response
 	var err error
 	httpStatus := constparam.StatusOk

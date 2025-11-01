@@ -1,4 +1,4 @@
-package model
+package models
 
 // Student represents the student entity
 type Student struct {
