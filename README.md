@@ -6,24 +6,31 @@ CRUD API for student data management following Go coding standards.
 
 ```
 go-crud/
-├── internal/               # Private application code
+├── cmd/                   # Application entry points
+│   └── main.go
+├── internal/              # Private application code
 │   ├── constparam/        # Constants and parameters
 │   ├── environment/       # Environment configuration
 │   ├── logging/           # Logging utilities
 │   ├── utils/             # Utility functions
-│   └── v1/handler/response/ # Response handlers
+│   └── v1/                # API version 1
+│       ├── controllers/   # HTTP handlers
+│       ├── handler/       # Request/Response structures
+│       │   └── response/
+│       ├── models/        # Data models
+│       └── services/      # Business logic
 ├── config/                # Database configuration
-├── controller/            # HTTP handlers
-├── model/                 # Data models
-├── service/               # Business logic
+├── docs/                  # API documentation (Swagger)
 ├── *.json                 # Environment configuration files
 ├── go.mod
+├── go.sum
 ├── main.go
 └── README.md
 ```
 
 ## Features
 
+- ✅ Versioned API structure (v1)
 - ✅ Logging pattern with requestId and requestKey
 - ✅ Consistent error handling
 - ✅ Standardized response format
@@ -60,6 +67,45 @@ Update file konfigurasi sesuai environment:
 }
 ```
 
+## Installation
+
+### Prerequisites
+- Go 1.19 or higher
+- PostgreSQL database
+- Git
+
+### Setup
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd go-crud
+```
+
+2. Install dependencies:
+```bash
+go mod download
+```
+
+3. Configure environment:
+```bash
+# Copy and edit configuration file
+cp local.json.example local.json
+# Edit database connection settings
+```
+
+4. Run database migrations:
+```bash
+# The application will auto-migrate on startup
+# Or manually create the student table:
+CREATE TABLE students (
+    student_id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    age INTEGER NOT NULL,
+    major VARCHAR(255) NOT NULL
+);
+```
+
 ## Running the Application
 
 ```bash
@@ -71,6 +117,7 @@ go run main.go -env=dev
 
 # Production environment
 go run main.go -env=prod
+
 ```
 
 ## API Endpoints
@@ -101,9 +148,61 @@ go run main.go -env=prod
 }
 ```
 
+## API Examples
+
+### Create Student
+```bash
+curl -X POST http://localhost:8080/v1/student \
+  -H "Content-Type: application/json" \
+  -H "requestId: 12345-67890" \
+  -d '{
+    "studentId": "STD001",
+    "name": "John Doe",
+    "age": 20,
+    "major": "Computer Science"
+  }'
+```
+
+### Get Student
+```bash
+curl -X GET http://localhost:8080/v1/student/STD001 \
+  -H "requestId: 12345-67890"
+```
+
+### Update Student
+```bash
+curl -X PUT http://localhost:8080/v1/student/STD001 \
+  -H "Content-Type: application/json" \
+  -H "requestId: 12345-67890" \
+  -d '{
+    "name": "James Smith",
+    "age": 21,
+    "major": "Software Engineering"
+  }'
+```
+
+### Delete Student
+```bash
+curl -X DELETE http://localhost:8080/v1/student/STD001 \
+  -H "requestId: 12345-67890"
+```
+
 ## API Documentation
 
 Swagger UI available at: `http://localhost:8080/swagger/`
+
+## Testing
+
+```bash
+# Run tests
+go test ./...
+
+# Run tests with coverage
+go test -cover ./...
+
+# Run specific test
+go test ./internal/v1/services -v
+```
 
 ## Logging
 

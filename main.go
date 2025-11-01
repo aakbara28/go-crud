@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"go-crud/config"
-	"go-crud/controller"
 	_ "go-crud/docs"
 	"go-crud/internal/environment"
-	"go-crud/model"
-	"go-crud/service"
+	"go-crud/internal/v1/controllers"
+	"go-crud/internal/v1/models"
+	"go-crud/internal/v1/services"
 	"log"
 	"net/http"
 
@@ -27,13 +27,13 @@ func main() {
 
 	// Setup database connection
 	db := config.SetupDB()
-	if err := db.AutoMigrate(&model.Student{}); err != nil {
+	if err := db.AutoMigrate(&models.Student{}); err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
 	// Initialize service and controller
-	studentService := service.NewStudentService(db)
-	studentController := controller.NewStudentController(studentService)
+	studentService := services.NewStudentService(db)
+	studentController := controllers.NewStudentController(studentService)
 
 	// Setup router
 	router := mux.NewRouter()
